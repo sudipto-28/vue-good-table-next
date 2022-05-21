@@ -1,5 +1,5 @@
 /*!
-  * vue-good-table-next v0.0.1
+  * vue-good-table-next v0.1.0
   * (c) 2021-present Boris Flesch <boris@singlequote.net>
   * (c) 2017-2021 xaksis <shay@crayonbits.com>
   * @license MIT
@@ -2339,10 +2339,11 @@ var defaultType = {
 };
 
 var _export_sfc = (sfc, props) => {
+  const target = sfc.__vccOpts || sfc;
   for (const [key, val] of props) {
-    sfc[key] = val;
+    target[key] = val;
   }
-  return sfc
+  return target;
 };
 
 const _sfc_main$6 = {
@@ -4076,7 +4077,7 @@ function buildLocalizeFn(args) {
       valuesArray = args.values[_width] || args.values[_defaultWidth];
     }
 
-    var index = args.argumentCallback ? args.argumentCallback(dirtyIndex) : dirtyIndex; // @ts-ignore: For some reason TypeScript just don't want to match it, no matter how hard we try. I challange you to try to remove it!
+    var index = args.argumentCallback ? args.argumentCallback(dirtyIndex) : dirtyIndex; // @ts-ignore: For some reason TypeScript just don't want to match it, no matter how hard we try. I challenge you to try to remove it!
 
     return valuesArray[index];
   };
@@ -4446,101 +4447,6 @@ function subMilliseconds(dirtyDate, dirtyAmount) {
   return addMilliseconds(dirtyDate, -amount);
 }
 
-function addLeadingZeros(number, targetLength) {
-  var sign = number < 0 ? '-' : '';
-  var output = Math.abs(number).toString();
-
-  while (output.length < targetLength) {
-    output = '0' + output;
-  }
-
-  return sign + output;
-}
-
-/*
- * |     | Unit                           |     | Unit                           |
- * |-----|--------------------------------|-----|--------------------------------|
- * |  a  | AM, PM                         |  A* |                                |
- * |  d  | Day of month                   |  D  |                                |
- * |  h  | Hour [1-12]                    |  H  | Hour [0-23]                    |
- * |  m  | Minute                         |  M  | Month                          |
- * |  s  | Second                         |  S  | Fraction of second             |
- * |  y  | Year (abs)                     |  Y  |                                |
- *
- * Letters marked by * are not implemented but reserved by Unicode standard.
- */
-
-var formatters$2 = {
-  // Year
-  y: function (date, token) {
-    // From http://www.unicode.org/reports/tr35/tr35-31/tr35-dates.html#Date_Format_tokens
-    // | Year     |     y | yy |   yyy |  yyyy | yyyyy |
-    // |----------|-------|----|-------|-------|-------|
-    // | AD 1     |     1 | 01 |   001 |  0001 | 00001 |
-    // | AD 12    |    12 | 12 |   012 |  0012 | 00012 |
-    // | AD 123   |   123 | 23 |   123 |  0123 | 00123 |
-    // | AD 1234  |  1234 | 34 |  1234 |  1234 | 01234 |
-    // | AD 12345 | 12345 | 45 | 12345 | 12345 | 12345 |
-    var signedYear = date.getUTCFullYear(); // Returns 1 for 1 BC (which is year 0 in JavaScript)
-
-    var year = signedYear > 0 ? signedYear : 1 - signedYear;
-    return addLeadingZeros(token === 'yy' ? year % 100 : year, token.length);
-  },
-  // Month
-  M: function (date, token) {
-    var month = date.getUTCMonth();
-    return token === 'M' ? String(month + 1) : addLeadingZeros(month + 1, 2);
-  },
-  // Day of the month
-  d: function (date, token) {
-    return addLeadingZeros(date.getUTCDate(), token.length);
-  },
-  // AM or PM
-  a: function (date, token) {
-    var dayPeriodEnumValue = date.getUTCHours() / 12 >= 1 ? 'pm' : 'am';
-
-    switch (token) {
-      case 'a':
-      case 'aa':
-        return dayPeriodEnumValue.toUpperCase();
-
-      case 'aaa':
-        return dayPeriodEnumValue;
-
-      case 'aaaaa':
-        return dayPeriodEnumValue[0];
-
-      case 'aaaa':
-      default:
-        return dayPeriodEnumValue === 'am' ? 'a.m.' : 'p.m.';
-    }
-  },
-  // Hour [1-12]
-  h: function (date, token) {
-    return addLeadingZeros(date.getUTCHours() % 12 || 12, token.length);
-  },
-  // Hour [0-23]
-  H: function (date, token) {
-    return addLeadingZeros(date.getUTCHours(), token.length);
-  },
-  // Minute
-  m: function (date, token) {
-    return addLeadingZeros(date.getUTCMinutes(), token.length);
-  },
-  // Second
-  s: function (date, token) {
-    return addLeadingZeros(date.getUTCSeconds(), token.length);
-  },
-  // Fraction of second
-  S: function (date, token) {
-    var numberOfDigits = token.length;
-    var milliseconds = date.getUTCMilliseconds();
-    var fractionalSeconds = Math.floor(milliseconds * Math.pow(10, numberOfDigits - 3));
-    return addLeadingZeros(fractionalSeconds, token.length);
-  }
-};
-var formatters$3 = formatters$2;
-
 var MILLISECONDS_IN_DAY = 86400000; // This function will be a part of public API when UTC function will be implemented.
 // See issue: https://github.com/date-fns/date-fns/issues/376
 
@@ -4643,7 +4549,7 @@ function startOfUTCWeek(dirtyDate, dirtyOptions) {
 
 function getUTCWeekYear(dirtyDate, dirtyOptions) {
   requiredArgs(1, arguments);
-  var date = toDate(dirtyDate, dirtyOptions);
+  var date = toDate(dirtyDate);
   var year = date.getUTCFullYear();
   var options = dirtyOptions || {};
   var locale = options.locale;
@@ -4702,6 +4608,101 @@ function getUTCWeek(dirtyDate, options) {
 
   return Math.round(diff / MILLISECONDS_IN_WEEK) + 1;
 }
+
+function addLeadingZeros(number, targetLength) {
+  var sign = number < 0 ? '-' : '';
+  var output = Math.abs(number).toString();
+
+  while (output.length < targetLength) {
+    output = '0' + output;
+  }
+
+  return sign + output;
+}
+
+/*
+ * |     | Unit                           |     | Unit                           |
+ * |-----|--------------------------------|-----|--------------------------------|
+ * |  a  | AM, PM                         |  A* |                                |
+ * |  d  | Day of month                   |  D  |                                |
+ * |  h  | Hour [1-12]                    |  H  | Hour [0-23]                    |
+ * |  m  | Minute                         |  M  | Month                          |
+ * |  s  | Second                         |  S  | Fraction of second             |
+ * |  y  | Year (abs)                     |  Y  |                                |
+ *
+ * Letters marked by * are not implemented but reserved by Unicode standard.
+ */
+
+var formatters$2 = {
+  // Year
+  y: function (date, token) {
+    // From http://www.unicode.org/reports/tr35/tr35-31/tr35-dates.html#Date_Format_tokens
+    // | Year     |     y | yy |   yyy |  yyyy | yyyyy |
+    // |----------|-------|----|-------|-------|-------|
+    // | AD 1     |     1 | 01 |   001 |  0001 | 00001 |
+    // | AD 12    |    12 | 12 |   012 |  0012 | 00012 |
+    // | AD 123   |   123 | 23 |   123 |  0123 | 00123 |
+    // | AD 1234  |  1234 | 34 |  1234 |  1234 | 01234 |
+    // | AD 12345 | 12345 | 45 | 12345 | 12345 | 12345 |
+    var signedYear = date.getUTCFullYear(); // Returns 1 for 1 BC (which is year 0 in JavaScript)
+
+    var year = signedYear > 0 ? signedYear : 1 - signedYear;
+    return addLeadingZeros(token === 'yy' ? year % 100 : year, token.length);
+  },
+  // Month
+  M: function (date, token) {
+    var month = date.getUTCMonth();
+    return token === 'M' ? String(month + 1) : addLeadingZeros(month + 1, 2);
+  },
+  // Day of the month
+  d: function (date, token) {
+    return addLeadingZeros(date.getUTCDate(), token.length);
+  },
+  // AM or PM
+  a: function (date, token) {
+    var dayPeriodEnumValue = date.getUTCHours() / 12 >= 1 ? 'pm' : 'am';
+
+    switch (token) {
+      case 'a':
+      case 'aa':
+        return dayPeriodEnumValue.toUpperCase();
+
+      case 'aaa':
+        return dayPeriodEnumValue;
+
+      case 'aaaaa':
+        return dayPeriodEnumValue[0];
+
+      case 'aaaa':
+      default:
+        return dayPeriodEnumValue === 'am' ? 'a.m.' : 'p.m.';
+    }
+  },
+  // Hour [1-12]
+  h: function (date, token) {
+    return addLeadingZeros(date.getUTCHours() % 12 || 12, token.length);
+  },
+  // Hour [0-23]
+  H: function (date, token) {
+    return addLeadingZeros(date.getUTCHours(), token.length);
+  },
+  // Minute
+  m: function (date, token) {
+    return addLeadingZeros(date.getUTCMinutes(), token.length);
+  },
+  // Second
+  s: function (date, token) {
+    return addLeadingZeros(date.getUTCSeconds(), token.length);
+  },
+  // Fraction of second
+  S: function (date, token) {
+    var numberOfDigits = token.length;
+    var milliseconds = date.getUTCMilliseconds();
+    var fractionalSeconds = Math.floor(milliseconds * Math.pow(10, numberOfDigits - 3));
+    return addLeadingZeros(fractionalSeconds, token.length);
+  }
+};
+var formatters$3 = formatters$2;
 
 var dayPeriodEnum = {
   am: 'am',
@@ -5614,7 +5615,7 @@ function timeLongFormatter(pattern, formatLong) {
 }
 
 function dateTimeLongFormatter(pattern, formatLong) {
-  var matchResult = pattern.match(/(P+)(p+)?/);
+  var matchResult = pattern.match(/(P+)(p+)?/) || [];
   var datePattern = matchResult[1];
   var timePattern = matchResult[2];
 
@@ -5945,7 +5946,7 @@ var unescapedLatinCharacterRegExp$1 = /[a-zA-Z]/;
  * 8. `YY` and `YYYY` tokens represent week-numbering years but they are often confused with years.
  *    You should enable `options.useAdditionalWeekYearTokens` to use them. See: https://git.io/fxCyr
  *
- * 9. `D` and `DD` tokens represent days of the year but they are ofthen confused with days of the month.
+ * 9. `D` and `DD` tokens represent days of the year but they are often confused with days of the month.
  *    You should enable `options.useAdditionalDayOfYearTokens` to use them. See: https://git.io/fxCyr
  *
  * ### v2.0.0 breaking changes:
@@ -7317,7 +7318,7 @@ var parsers = {
       date.setUTCHours(dayPeriodEnumToHours(value), 0, 0, 0);
       return date;
     },
-    incompatibleTokens: ['b', 'B', 'H', 'K', 'k', 't', 'T']
+    incompatibleTokens: ['b', 'B', 'H', 'k', 't', 'T']
   },
   // AM, PM, midnight
   b: {
@@ -7359,7 +7360,7 @@ var parsers = {
       date.setUTCHours(dayPeriodEnumToHours(value), 0, 0, 0);
       return date;
     },
-    incompatibleTokens: ['a', 'B', 'H', 'K', 'k', 't', 'T']
+    incompatibleTokens: ['a', 'B', 'H', 'k', 't', 'T']
   },
   // in the morning, in the afternoon, in the evening, at night
   B: {
@@ -7495,7 +7496,7 @@ var parsers = {
 
       return date;
     },
-    incompatibleTokens: ['a', 'b', 'h', 'H', 'k', 't', 'T']
+    incompatibleTokens: ['h', 'H', 'k', 't', 'T']
   },
   // Hour [1-24]
   k: {
@@ -7853,7 +7854,7 @@ var unescapedLatinCharacterRegExp = /[a-zA-Z]/;
  * |                                 |     | tt      | ...                               | 2     |
  * | Fraction of second              |  30 | S       | 0, 1, ..., 9                      |       |
  * |                                 |     | SS      | 00, 01, ..., 99                   |       |
- * |                                 |     | SSS     | 000, 0001, ..., 999               |       |
+ * |                                 |     | SSS     | 000, 001, ..., 999                |       |
  * |                                 |     | SSSS    | ...                               | 2     |
  * | Milliseconds timestamp          |  20 | T       | 512969520900                      |       |
  * |                                 |     | TT      | ...                               | 2     |
@@ -8377,7 +8378,7 @@ const _sfc_main = {
   props: {
     isLoading: { default: null, type: Boolean },
     maxHeight: { default: null, type: String },
-    fixedHeader: Boolean ,
+    fixedHeader: Boolean,
     theme: { default: '' },
     mode: { default: 'local' }, // could be remote
     totalRows: {}, // required if mode = 'remote'
@@ -8385,18 +8386,19 @@ const _sfc_main = {
     columns: {},
     rows: {},
     lineNumbers: Boolean,
-    responsive: { default: true , type: Boolean },
+    responsive: { default: true, type: Boolean },
     rtl: Boolean,
     rowStyleClass: { default: null, type: [Function, String] },
     compactMode: Boolean,
+    enableRowExpand: { default: false, type: Boolean },
 
     groupOptions: {
       default() {
         return {
           enabled: false,
           collapsable: false,
-          rowKey: null
-        };
+          rowKey: null,
+        }
       },
     },
 
@@ -8409,7 +8411,7 @@ const _sfc_main = {
           clearSelectionText: 'clear',
           disableSelectInfo: false,
           selectAllByGroup: false,
-        };
+        }
       },
     },
 
@@ -8420,7 +8422,7 @@ const _sfc_main = {
           enabled: true,
           multipleColumns: true,
           initialSortBy: {},
-        };
+        }
       },
     },
 
@@ -8433,11 +8435,10 @@ const _sfc_main = {
           perPage: 10,
           perPageDropdown: null,
           perPageDropdownEnabled: true,
-          position: 'bottom',
           dropdownAllowAll: true,
           mode: 'records', // or pages
           infoFn: null,
-        };
+        }
       },
     },
 
@@ -8449,11 +8450,17 @@ const _sfc_main = {
           externalQuery: null,
           searchFn: null,
           placeholder: 'Search Table',
-        };
+        }
       },
     },
-  },
 
+    expandedRowClasses: {
+      default: '', type: String,
+    },
+    expandedRowDetailClasses: {
+      default: '', type: String,
+    },
+  },
 
 
   data: () => ({
@@ -8513,6 +8520,8 @@ const _sfc_main = {
     forceSearch: false,
     sortChanged: false,
     dataTypes: dataTypes || {},
+
+    expandedRowIndex: null,
   }),
 
   emits: [
@@ -8602,44 +8611,44 @@ const _sfc_main = {
         return this.tableStyleClasses
     },
     hasFooterSlot() {
-      return !!this.$slots['table-actions-bottom'];
+      return !!this.$slots['table-actions-bottom']
     },
     wrapperStyles() {
       return {
         overflow: 'scroll-y',
         maxHeight: this.maxHeight ? this.maxHeight : 'auto',
-      };
+      }
     },
 
     rowKeyField() {
-      return this.groupOptions.rowKey || 'vgt_header_id';
+      return this.groupOptions.rowKey || 'vgt_header_id'
     },
 
     hasHeaderRowTemplate() {
-      return !!this.$slots['table-header-row'];
+      return !!this.$slots['table-header-row']
     },
 
     showEmptySlot() {
-      if (!this.paginated.length) return true;
+      if (!this.paginated.length) return true
 
       if (
         this.paginated[0].label === 'no groups' &&
         !this.paginated[0].children.length
       ) {
-        return true;
+        return true
       }
 
-      return false;
+      return false
     },
 
     allSelected() {
       return (
         this.selectedRowCount > 0 &&
         ((this.selectAllByPage &&
-          this.selectedPageRowsCount === this.totalPageRowCount) ||
+            this.selectedPageRowsCount === this.totalPageRowCount) ||
           (!this.selectAllByPage &&
             this.selectedRowCount === this.totalRowCount))
-      );
+      )
     },
 
     allSelectedIndeterminate() {
@@ -8647,19 +8656,19 @@ const _sfc_main = {
         !this.allSelected &&
         ((this.selectAllByPage && this.selectedPageRowsCount > 0) ||
           (!this.selectAllByPage && this.selectedRowCount > 0))
-      );
+      )
     },
 
     selectionInfo() {
-      return `${this.selectedRowCount} ${this.selectionText}`;
+      return `${this.selectedRowCount} ${this.selectionText}`
     },
 
     selectedRowCount() {
-      return this.selectedRows.length;
+      return this.selectedRows.length
     },
 
     selectedPageRowsCount() {
-      return this.selectedPageRows.length;
+      return this.selectedPageRows.length
     },
 
     selectedPageRows() {
@@ -8671,7 +8680,7 @@ const _sfc_main = {
           }
         });
       });
-      return selectedRows;
+      return selectedRows
     },
 
     selectedRows() {
@@ -8683,7 +8692,7 @@ const _sfc_main = {
           }
         });
       });
-      return selectedRows.sort((r1, r2) => r1.originalIndex - r2.originalIndex);
+      return selectedRows.sort((r1, r2) => r1.originalIndex - r2.originalIndex)
     },
 
     fullColspan() {
@@ -8695,7 +8704,7 @@ const _sfc_main = {
       }
       if (this.lineNumbers) fullColspan++;
       if (this.selectable) fullColspan++;
-      return fullColspan;
+      return fullColspan
     },
     groupHeaderOnTop() {
       if (
@@ -8704,12 +8713,12 @@ const _sfc_main = {
         this.groupOptions.headerPosition &&
         this.groupOptions.headerPosition === 'bottom'
       ) {
-        return false;
+        return false
       }
-      if (this.groupOptions && this.groupOptions.enabled) return true;
+      if (this.groupOptions && this.groupOptions.enabled) return true
 
       // will only get here if groupOptions is false
-      return false;
+      return false
     },
     groupHeaderOnBottom() {
       if (
@@ -8718,40 +8727,40 @@ const _sfc_main = {
         this.groupOptions.headerPosition &&
         this.groupOptions.headerPosition === 'bottom'
       ) {
-        return true;
+        return true
       }
-      return false;
+      return false
     },
     totalRowCount() {
       const total = this.processedRows.reduce((total, headerRow) => {
         const childrenCount = headerRow.children ? headerRow.children.length : 0;
-        return total + childrenCount;
+        return total + childrenCount
       }, 0);
-      return total;
+      return total
     },
     totalPageRowCount() {
       const total = this.paginated.reduce((total, headerRow) => {
         const childrenCount = headerRow.children ? headerRow.children.length : 0;
-        return total + childrenCount;
+        return total + childrenCount
       }, 0);
-      return total;
+      return total
     },
     wrapStyleClasses() {
       let classes = 'vgt-wrap';
       if (this.rtl) classes += ' rtl';
       classes += ` ${this.theme}`;
-      return classes;
+      return classes
     },
     tableStyleClasses() {
       let classes = this.styleClass;
       classes += ` ${this.theme}`;
-      return classes;
+      return classes
     },
 
     searchTerm() {
       return this.externalSearchQuery != null
         ? this.externalSearchQuery
-        : this.globalSearchTerm;
+        : this.globalSearchTerm
     },
 
     //
@@ -8761,19 +8770,19 @@ const _sfc_main = {
         !!this.globalSearchTerm &&
         this.searchTrigger !== 'enter'
       ) {
-        return true;
+        return true
       }
 
       if (this.externalSearchQuery != null && this.searchTrigger !== 'enter') {
-        return true;
+        return true
       }
 
       if (this.forceSearch) {
         this.forceSearch = false;
-        return true;
+        return true
       }
 
-      return false;
+      return false
     },
 
     // this is done everytime sortColumn
@@ -8783,7 +8792,7 @@ const _sfc_main = {
       // we only process rows when mode is local
       let computedRows = this.filteredRows;
       if (this.mode === 'remote') {
-        return computedRows;
+        return computedRows
       }
 
       // take care of the global filter here also
@@ -8808,22 +8817,22 @@ const _sfc_main = {
                   row,
                   col,
                   this.collectFormatted(row, col),
-                  this.searchTerm
+                  this.searchTerm,
                 );
                 if (foundMatch) {
                   filteredRows.push(row);
-                  break; // break the loop
+                  break // break the loop
                 }
               } else {
                 // comparison
                 const matched = defaultType.filterPredicate(
                   this.collectFormatted(row, col),
                   this.searchTerm,
-                  this.searchSkipDiacritics
+                  this.searchSkipDiacritics,
                 );
                 if (matched) {
                   filteredRows.push(row);
-                  break; // break loop
+                  break // break loop
                 }
               }
             }
@@ -8865,24 +8874,24 @@ const _sfc_main = {
                 const column = this.getColumnForField(srt.field);
                 const xvalue = this.collect(xRow, srt.field);
                 const yvalue = this.collect(yRow, srt.field);
-  
+
                 //* if a custom sort function has been provided we use that
                 const { sortFn } = column;
                 if (sortFn && typeof sortFn === 'function') {
                   sortValue =
                     sortValue ||
                     sortFn(xvalue, yvalue, column, xRow, yRow) *
-                      (srt.type === SORT_TYPES.Descending ? -1 : 1);
+                    (srt.type === SORT_TYPES.Descending ? -1 : 1);
                 } else {
                   //* else we use our own sort
                   sortValue =
                     sortValue ||
                     column.typeDef.compare(xvalue, yvalue, column) *
-                      (srt.type === SORT_TYPES.Descending ? -1 : 1);
+                    (srt.type === SORT_TYPES.Descending ? -1 : 1);
                 }
               }
             }
-            return sortValue;
+            return sortValue
           });
         });
       }
@@ -8893,14 +8902,14 @@ const _sfc_main = {
         this.filteredRows = computedRows;
       }
 
-      return computedRows;
+      return computedRows
     },
 
     paginated() {
-      if (!this.processedRows.length) return [];
+      if (!this.processedRows.length) return []
 
       if (this.mode === 'remote') {
-        return this.processedRows;
+        return this.processedRows
       }
 
       //* flatten the rows for paging.
@@ -8957,7 +8966,7 @@ const _sfc_main = {
           hRow.children.push(flatRow);
         }
       });
-      return reconstructedRows;
+      return reconstructedRows
     },
 
     originalRows() {
@@ -8982,7 +8991,7 @@ const _sfc_main = {
         });
       });
 
-      return nestedRows;
+      return nestedRows
     },
 
     typedColumns() {
@@ -8991,11 +9000,11 @@ const _sfc_main = {
         const column = columns[i];
         column.typeDef = this.dataTypes[column.type] || defaultType;
       }
-      return columns;
+      return columns
     },
 
     hasRowClickListener() {
-      return this.$attrs && this.$attrs['row-click'];
+      return this.$attrs && this.$attrs['row-click']
     },
   },
 
@@ -9041,7 +9050,7 @@ const _sfc_main = {
 
     getColumnForField(field) {
       for (let i = 0; i < this.typedColumns.length; i += 1) {
-        if (this.typedColumns[i].field === field) return this.typedColumns[i];
+        if (this.typedColumns[i].field === field) return this.typedColumns[i]
       }
     },
 
@@ -9085,7 +9094,7 @@ const _sfc_main = {
     toggleSelectAll() {
       if (this.allSelected) {
         this.unselectAllInternal();
-        return;
+        return
       }
       const rows = this.selectAllByPage ? this.paginated : this.filteredRows;
       rows.forEach((headerRow) => {
@@ -9123,7 +9132,7 @@ const _sfc_main = {
         currentPage: this.currentPage,
         currentPerPage: this.currentPerPage,
         total: Math.floor(this.totalRowCount / this.currentPerPage),
-      };
+      }
     },
 
     pageChanged(pagination) {
@@ -9168,13 +9177,24 @@ const _sfc_main = {
       // after this. just set table loading to true
       if (this.mode === 'remote') {
         this.$emit('update:isLoading', true);
-        return;
+        return
       }
       this.sortChanged = true;
     },
 
+    toggleRowExpand(row, index) {
+      if (this.expandedRowIndex === index) {
+        this.expandedRowIndex = null;
+      } else {
+        this.expandedRowIndex = index;
+      }
+    },
+
     // checkbox click should always do the following
     onCheckboxClicked(row, index, event) {
+      if (this.enableRowExpand) {
+        this.toggleRowExpand(row, index);
+      }
       row['vgtSelected'] = !row.vgtSelected;
       this.$emit('row-click', {
         row,
@@ -9194,6 +9214,9 @@ const _sfc_main = {
     },
 
     onRowClicked(row, index, event) {
+      if (this.enableRowExpand) {
+        this.toggleRowExpand(row, index);
+      }
       if (this.selectable && !this.selectOnCheckboxOnly) {
         row['vgtSelected'] = !row.vgtSelected;
       }
@@ -9271,16 +9294,16 @@ const _sfc_main = {
         const splitter = selector.split('.');
         for (let i = 0; i < splitter.length; i++) {
           if (typeof result === 'undefined' || result === null) {
-            return undefined;
+            return undefined
           }
           result = result[splitter[i]];
         }
-        return result;
+        return result
       }
 
-      if (typeof field === 'function') return field(obj);
-      if (typeof field === 'string') return dig(obj, field);
-      return undefined;
+      if (typeof field === 'function') return field(obj)
+      if (typeof field === 'string') return dig(obj, field)
+      return undefined
     },
 
     collectFormatted(obj, column, headerRow = false) {
@@ -9290,12 +9313,12 @@ const _sfc_main = {
       } else {
         value = this.collect(obj, column.field);
       }
-      if (value === undefined) return '';
+      if (value === undefined) return ''
 
       // if user has supplied custom formatter,
       // use that here
       if (column.formatFn && typeof column.formatFn === 'function') {
-        return column.formatFn(value, obj);
+        return column.formatFn(value, obj)
       }
 
       // lets format the resultant data
@@ -9309,8 +9332,8 @@ const _sfc_main = {
 
       let result = type.format(value, column);
       // we must have some values in compact mode
-      if (this.compactMode && (result == '' || result == null)) return '-';
-      return result;
+      if (this.compactMode && (result == '' || result == null)) return '-'
+      return result
     },
 
     formattedRow(row, isHeaderRow = false) {
@@ -9322,11 +9345,11 @@ const _sfc_main = {
           formattedRow[col.field] = this.collectFormatted(
             row,
             col,
-            isHeaderRow
+            isHeaderRow,
           );
         }
       }
-      return formattedRow;
+      return formattedRow
     },
 
     // Get classes for the given column index & element.
@@ -9347,7 +9370,7 @@ const _sfc_main = {
       } else if (typeof custom === 'string') {
         classes[custom] = true;
       }
-      return classes;
+      return classes
     },
 
     // method to filter rows
@@ -9386,14 +9409,14 @@ const _sfc_main = {
             // if remote filtering has already been taken care of.
             this.filteredRows = computedRows;
           }
-          return;
+          return
         }
 
         const fieldKey = (field) => {
-          if (typeof(field) === 'function' && field.name) {
-            return field.name;
+          if (typeof (field) === 'function' && field.name) {
+            return field.name
           }
-          return field;
+          return field
         };
 
         for (let i = 0; i < this.typedColumns.length; i++) {
@@ -9410,8 +9433,8 @@ const _sfc_main = {
                 ) {
                   return col.filterOptions.filterFn(
                     this.collect(row, col.field),
-                    this.columnFilters[fieldKey(col.field)]
-                  );
+                    this.columnFilters[fieldKey(col.field)],
+                  )
                 }
 
                 // Otherwise Use default filters
@@ -9421,8 +9444,8 @@ const _sfc_main = {
                   this.columnFilters[fieldKey(col.field)],
                   false,
                   col.filterOptions &&
-                    typeof col.filterOptions.filterDropdownItems === 'object'
-                );
+                  typeof col.filterOptions.filterDropdownItems === 'object',
+                )
               });
               // should we remove the header?
               headerRow.children = newChildren;
@@ -9449,14 +9472,14 @@ const _sfc_main = {
             const c = children[j];
             if (c.originalIndex === rowId) {
               found = true;
-              break;
+              break
             }
             index += 1;
           }
         }
-        if (found) break;
+        if (found) break
       }
-      return ((this.currentPage - 1) * this.currentPerPage) + index + 1;
+      return ((this.currentPage - 1) * this.currentPerPage) + index + 1
     },
 
     getRowStyleClass(row) {
@@ -9471,7 +9494,12 @@ const _sfc_main = {
       if (rowStyleClasses) {
         classes += ` ${rowStyleClasses}`;
       }
-      return classes;
+
+      if(this.expandedRowIndex === row.originalIndex) {
+        classes += ` ${this.expandedRowClasses}`;
+      }
+
+      return classes
     },
 
     handleGrouped(originalRows) {
@@ -9487,7 +9515,7 @@ const _sfc_main = {
           childRow.vgt_id = i;
         });
       });
-      return originalRows;
+      return originalRows
     },
 
     initializePagination() {
@@ -9636,7 +9664,7 @@ const _sfc_main = {
         } else {
           const hasField = Object.prototype.hasOwnProperty.call(
             initSortBy,
-            'field'
+            'field',
           );
           if (hasField) ref.setInitialSort([initSortBy]);
         }
@@ -9723,10 +9751,11 @@ const _hoisted_10 = ["disabled", "checked"];
 const _hoisted_11 = ["onClick", "data-label"];
 const _hoisted_12 = { key: 0 };
 const _hoisted_13 = ["innerHTML"];
-const _hoisted_14 = { key: 0 };
-const _hoisted_15 = ["colspan"];
-const _hoisted_16 = /*#__PURE__*/vue.createElementVNode("div", { class: "vgt-center-align vgt-text-disabled" }, " No data for table ", -1 /* HOISTED */);
-const _hoisted_17 = {
+const _hoisted_14 = ["colspan"];
+const _hoisted_15 = { key: 0 };
+const _hoisted_16 = ["colspan"];
+const _hoisted_17 = /*#__PURE__*/vue.createElementVNode("div", { class: "vgt-center-align vgt-text-disabled" }, " No data for table ", -1 /* HOISTED */);
+const _hoisted_18 = {
   key: 2,
   class: "vgt-wrap__actions-footer"
 };
@@ -9991,7 +10020,8 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                                     row: row,
                                     column: column,
                                     formattedRow: $options.formattedRow(row),
-                                    index: index
+                                    index: index,
+                                    expandedRow: _ctx.expandedRowIndex === index
                                   }, () => [
                                     (!column.html)
                                       ? (vue.openBlock(), vue.createElementBlock("span", _hoisted_12, vue.toDisplayString($options.collectFormatted(row, column)), 1 /* TEXT */))
@@ -10005,6 +10035,20 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                           ], 64 /* STABLE_FRAGMENT */))
                         }), 256 /* UNKEYED_FRAGMENT */))
                       ], 42 /* CLASS, PROPS, HYDRATE_EVENTS */, _hoisted_7))
+                    : vue.createCommentVNode("v-if", true),
+                  (_ctx.expandedRowIndex === index)
+                    ? (vue.openBlock(), vue.createElementBlock("tr", {
+                        key: 1,
+                        class: vue.normalizeClass($props.expandedRowDetailClasses)
+                      }, [
+                        vue.createElementVNode("td", { colspan: $options.fullColspan }, [
+                          vue.renderSlot(_ctx.$slots, "row-details", {
+                            row: row,
+                            formattedRow: $options.formattedRow(row),
+                            index: index
+                          })
+                        ], 8 /* PROPS */, _hoisted_14)
+                      ], 2 /* CLASS */))
                     : vue.createCommentVNode("v-if", true)
                 ], 64 /* STABLE_FRAGMENT */))
               }), 256 /* UNKEYED_FRAGMENT */)),
@@ -10041,20 +10085,20 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
             ]))
           }), 128 /* KEYED_FRAGMENT */)),
           ($options.showEmptySlot)
-            ? (vue.openBlock(), vue.createElementBlock("tbody", _hoisted_14, [
+            ? (vue.openBlock(), vue.createElementBlock("tbody", _hoisted_15, [
                 vue.createElementVNode("tr", null, [
                   vue.createElementVNode("td", { colspan: $options.fullColspan }, [
                     vue.renderSlot(_ctx.$slots, "emptystate", {}, () => [
-                      _hoisted_16
+                      _hoisted_17
                     ])
-                  ], 8 /* PROPS */, _hoisted_15)
+                  ], 8 /* PROPS */, _hoisted_16)
                 ])
               ]))
             : vue.createCommentVNode("v-if", true)
         ], 2 /* CLASS */)
       ], 6 /* CLASS, STYLE */),
       ($options.hasFooterSlot)
-        ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_17, [
+        ? (vue.openBlock(), vue.createElementBlock("div", _hoisted_18, [
             vue.renderSlot(_ctx.$slots, "table-actions-bottom")
           ]))
         : vue.createCommentVNode("v-if", true),

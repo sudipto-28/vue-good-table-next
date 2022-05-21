@@ -20,6 +20,8 @@
     <input type="text" v-model="searchTerm">
     <vue-good-table
       ref="my-table"
+      :enable-row-expand="true"
+      expanded-row-classes="bg-red-500"
       v-on:column-filter="onColumnFilter"
       v-on:select-all="onSelectAll"
       v-on:sort-change="onSortChange"
@@ -35,6 +37,7 @@
         selectOnCheckboxOnly: false,
         disableSelectInfo: true,
       }"
+
       theme="polar-bear"
       styleClass="vgt-table"
       :sort-options="{
@@ -45,6 +48,9 @@
         enabled: true,
         skipDiacritics: true,
       }">
+      <template #row-details="props">
+        <p>{{ props.formattedRow }}</p>
+      </template>
     </vue-good-table>
     <h3>Remote Table</h3>
     <remote-table/>
