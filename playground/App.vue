@@ -33,9 +33,9 @@
       :rows="rows"
       :pagination-options="paginationOptions"
       :select-options="{
-        enabled: true,
+        enabled: false,
         selectOnCheckboxOnly: false,
-        disableSelectInfo: true,
+        disableSelectInfo: false,
       }"
 
       theme="polar-bear"
@@ -48,8 +48,17 @@
         enabled: true,
         skipDiacritics: true,
       }">
+      <template #table-row="props">
+        <span v-if="props.column.field == 'name'">
+          {{props.row.name}} - 
+          <span style="font-weight: bold; color: red;">expandedRow={{props.expandedRow}}</span> 
+        </span>
+        <span v-else>
+          {{props.formattedRow[props.column.field]}}
+        </span>
+      </template>
       <template #row-details="props">
-        <p>{{ props.formattedRow }}</p>
+        <p>{{ props.row.expandedRowContent ?? props.formattedRow }}</p>
       </template>
     </vue-good-table>
     <h3>Remote Table</h3>
@@ -122,9 +131,9 @@ export default {
           sortable: false,
           label: 'Created On',
           field: 'createdAt',
-          type: 'date',
-          dateInputFormat: 'yyyy-MM-dd',
-          dateOutputFormat: 'PPPP',
+          // type: 'date',
+          // dateInputFormat: 'yyyy-MM-dd',
+          // dateOutputFormat: 'PPPP',
         },
         {
           label: 'Percent',
@@ -172,7 +181,7 @@ export default {
           exact: 'match',
           average: 1,
           children: ["test"],
-          expandedRow: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam",
+          expandedRowContent: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam",
         },
         {
           id: 3,

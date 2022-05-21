@@ -85,7 +85,6 @@
 						:typed-columns="typedColumns"
 						:getClasses="getClasses"
 						:searchEnabled="searchEnabled"
-						:expandRowsEnabled="expandRowsEnabled"
 						:paginated="paginated"
 						:table-ref="$refs.table"
 					>
@@ -131,7 +130,6 @@
 						:typed-columns="typedColumns"
 						:getClasses="getClasses"
 						:searchEnabled="searchEnabled"
-						:expandRowsEnabled="expandRowsEnabled"
 					>
 						<template #table-column="slotProps">
 							<slot name="table-column" :column="slotProps.column">
@@ -206,20 +204,6 @@
 										:checked="row.vgtSelected"
 									/>
 								</th>
-								<template v-if="expandRowsEnabled">
-									<td>
-										<a
-											href="#"
-											@click.prevent="toggleExpandRow(row, index, $event)"
-											class="vgt-wrap__expander"
-										>
-											<template v-if="row['expandedRow']">
-												<template v-if="row['expanded']"> (-) </template>
-												<template v-else> (+) </template>
-											</template>
-										</a>
-									</td>
-								</template>
 								<template v-for="(column, i) in columns">
 									<td
 										:key="i"
@@ -245,8 +229,9 @@
 								</template>
 							</tr>
 							<tr
-								:class="expandedRowDetailClasses"
 								v-if="expandedRowIndex === index"
+								:class="expandedRowDetailClasses"
+								:key="row.originalIndex"
 							>
 								<td :colspan="fullColspan">
 									<slot
@@ -258,7 +243,10 @@
 									</slot>
 								</td>
 							</tr>
-							<tr v-if="row['expanded']">
+							<tr
+								v-if="row['expanded']"
+								:key="row.originalIndex"
+							>
 								<td :colspan="fullColspan">
 									{{ row["expandedRow"] }}
 								</td>
@@ -488,9 +476,6 @@ export default {
 		sortable: true,
 		defaultSortBy: null,
 		multipleColumnSort: true,
-
-		// internat expand rows options
-		expandRowsEnabled: false,
 
 		// internal search options
 		searchEnabled: false,
