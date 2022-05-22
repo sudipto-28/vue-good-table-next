@@ -18,7 +18,8 @@
     "test:unit": "vue-cli-service test:unit",
     "dev": "vite --config playground/vite.config.js",
     "docs:build": "vuepress build vp-docs",
-    "docs:dev": "vuepress dev vp-docs"
+    "docs:dev": "vuepress dev vp-docs",
+    "docs:serve": "vuepress serve vp-docs"
   },
   "main": "dist/vue-good-table.cjs.js",
   "module": "dist/vue-good-table.esm.js",
