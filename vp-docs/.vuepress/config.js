@@ -73,6 +73,7 @@ module.exports = {
             '/guide/advanced/checkbox-table',
             '/guide/advanced/grouped-table',
             '/guide/advanced/remote-workflow',
+            '/guide/advanced/row-details-table',
           ]
         },
         {

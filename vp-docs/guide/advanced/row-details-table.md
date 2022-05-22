@@ -1,6 +1,6 @@
 # Row Details Table
 
-This option allows you to show or hide the details of a row.
+This option allows you to show or hide the details of a row on click.
 
 ## Configuration 
 
@@ -28,7 +28,7 @@ Object containing select options
   expanded-row-classes="bg-red"
   expanded-row-detail-classes="bg-yellow">
     <template #row-details="props">
-      <p>{{ props.formattedRow }}</p>
+      <p>{{ props.formattedRow }} (or props.row.X to access any property X of the current row)</p>
     </template>
 </vue-good-table>
 ```

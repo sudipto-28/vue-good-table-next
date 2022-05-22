@@ -228,6 +228,10 @@ table.vgt-table tr.clickable:hover {
   pointer-events: none;
 }
 
+.vgt-wrap__expander {
+  text-decoration: none;
+}
+
 .vgt-table.bordered td, .vgt-table.bordered th {
   border: 1px solid #DCDFE6;
 }
