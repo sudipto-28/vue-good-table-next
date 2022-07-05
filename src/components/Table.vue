@@ -330,6 +330,7 @@
 </template>
 
 <script>
+import { toRaw } from 'vue';
 import { DEFAULT_SORT_TYPE, SORT_TYPES } from "./utils/constants";
 import isEqual from "lodash.isequal";
 import defaultType from "./types/default";
@@ -1188,7 +1189,7 @@ export default {
 
 		changeSort(sorts) {
 			this.sorts = sorts;
-			this.$emit("sort-change", sorts);
+			this.$emit("sort-change", toRaw(sorts));
 
 			// every time we change sort we need to reset to page 1
 			this.changePage(1);
