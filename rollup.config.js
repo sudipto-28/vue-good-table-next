@@ -1,4 +1,3 @@
-import path from 'path'
 import replace from '@rollup/plugin-replace'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
@@ -67,7 +66,7 @@ function createConfig(format, output, plugins = []) {
   output.banner = banner
   output.externalLiveBindings = false
   output.globals = {
-    // vue: 'Vue',
+    vue: 'Vue',
     // devtools are not global in iife
     // '@vue/devtools-api': 'VueDevtoolsApi',
   }
