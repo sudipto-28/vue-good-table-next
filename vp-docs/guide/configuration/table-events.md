@@ -163,8 +163,9 @@ is an array.
 ```javascript
 methods: {
   onSortChange(params) {
-    // params[0].sortType - ascending or descending
-    // params[0].columnIndex - index of column being sorted
+    // params is Vue-created proxy object:
+    // params[0].type - "asc" or "desc"
+    // params[0].field - field being sorted
   }
 }
 ```
