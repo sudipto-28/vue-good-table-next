@@ -199,9 +199,11 @@ table.vgt-table tr.clickable:hover {
   border: 1px solid #DCDFE6;
   transition: border-color 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
-.vgt-input::placeholder, .vgt-select::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+.vgt-input::placeholder, .vgt-select::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #606266;
-  opacity: 0.3; /* Firefox */
+  opacity: 0.3;
+  /* Firefox */
 }
 .vgt-input:focus, .vgt-select:focus {
   outline: none;
@@ -519,6 +521,7 @@ table.vgt-table tr.clickable:hover {
   .vgt-wrap__footer .footer__navigation__info {
     display: none;
   }
+
   .vgt-wrap__footer .footer__navigation__page-btn {
     margin-left: 16px;
   }
@@ -570,9 +573,11 @@ table.vgt-table tr.clickable:hover {
   background-color: #232d3f;
   border: 1px solid #435169;
 }
-.vgt-table.nocturnal .vgt-input::placeholder, .vgt-table.nocturnal .vgt-select::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+.vgt-table.nocturnal .vgt-input::placeholder, .vgt-table.nocturnal .vgt-select::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #C7CED8;
-  opacity: 0.3; /* Firefox */
+  opacity: 0.3;
+  /* Firefox */
 }
 
 .vgt-wrap.nocturnal .vgt-wrap__footer {
@@ -643,9 +648,11 @@ table.vgt-table tr.clickable:hover {
   background-color: #232d3f;
   border: 1px solid #435169;
 }
-.vgt-wrap.nocturnal .vgt-global-search__input .vgt-input::placeholder, .vgt-wrap.nocturnal .vgt-global-search__input .vgt-select::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+.vgt-wrap.nocturnal .vgt-global-search__input .vgt-input::placeholder, .vgt-wrap.nocturnal .vgt-global-search__input .vgt-select::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #C7CED8;
-  opacity: 0.3; /* Firefox */
+  opacity: 0.3;
+  /* Firefox */
 }
 
 .vgt-table.black-rhino {
@@ -696,9 +703,11 @@ table.vgt-table tr.clickable:hover {
   background-color: #34445f;
   border: 1px solid transparent;
 }
-.vgt-table.black-rhino .vgt-input::placeholder, .vgt-table.black-rhino .vgt-select::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+.vgt-table.black-rhino .vgt-input::placeholder, .vgt-table.black-rhino .vgt-select::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #dae2f0;
-  opacity: 0.3; /* Firefox */
+  opacity: 0.3;
+  /* Firefox */
 }
 
 .vgt-wrap.black-rhino .vgt-wrap__footer {
@@ -772,9 +781,11 @@ table.vgt-table tr.clickable:hover {
   background-color: #44516c;
   border: 1px solid transparent;
 }
-.vgt-wrap.black-rhino .vgt-global-search__input .vgt-input::placeholder, .vgt-wrap.black-rhino .vgt-global-search__input .vgt-select::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+.vgt-wrap.black-rhino .vgt-global-search__input .vgt-input::placeholder, .vgt-wrap.black-rhino .vgt-global-search__input .vgt-select::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #dae2f0;
-  opacity: 0.3; /* Firefox */
+  opacity: 0.3;
+  /* Firefox */
 }
 
 .vgt-inner-wrap {
@@ -921,7 +932,9 @@ table.vgt-table tr.clickable:hover {
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   border: 1px solid #E4EBF3;
 }
-.vgt-wrap.polar-bear .vgt-global-search__input .vgt-input::placeholder, .vgt-wrap.polar-bear .vgt-global-search__input .vgt-select::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+.vgt-wrap.polar-bear .vgt-global-search__input .vgt-input::placeholder, .vgt-wrap.polar-bear .vgt-global-search__input .vgt-select::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #394567;
-  opacity: 0.3; /* Firefox */
+  opacity: 0.3;
+  /* Firefox */
 }

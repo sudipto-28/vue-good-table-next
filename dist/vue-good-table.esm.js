@@ -1,10 +1,10 @@
 /*!
-  * vue-good-table-next v0.2.1
+  * vue-good-table-next v0.2.0
   * (c) 2021-present Boris Flesch <boris@singlequote.net>
   * (c) 2017-2021 xaksis <shay@crayonbits.com>
   * @license MIT
   */
-import { openBlock, createElementBlock, toDisplayString, withModifiers, createElementVNode, withKeys, resolveComponent, withDirectives, Fragment, renderList, createCommentVNode, vModelSelect, createVNode, normalizeClass, renderSlot, normalizeStyle, createTextVNode, withCtx, toRaw, createSlots, createBlock } from 'vue';
+import { openBlock, createElementBlock, toDisplayString, withModifiers, createElementVNode, withKeys, resolveComponent, withDirectives, Fragment, renderList, createCommentVNode, vModelSelect, createVNode, normalizeClass, renderSlot, normalizeStyle, createTextVNode, withCtx, createSlots, createBlock } from 'vue';
 
 const DEFAULT_SORT_TYPE = 'asc';
 const SORT_TYPES = {
@@ -9241,7 +9241,7 @@ const _sfc_main = {
 
 		changeSort(sorts) {
 			this.sorts = sorts;
-			this.$emit("sort-change", toRaw(sorts));
+			this.$emit("sort-change", sorts);
 
 			// every time we change sort we need to reset to page 1
 			this.changePage(1);
