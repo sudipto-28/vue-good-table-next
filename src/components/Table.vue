@@ -1121,7 +1121,7 @@ export default {
 
 		toggleSelectGroup(event, headerRow) {
 			headerRow.children.forEach((row) => {
-				row["vgtSelected"] = event;
+				row["vgtSelected"] = event.checked;
 			});
 		},
 
